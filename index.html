@@ -1,1 +1,782 @@
-jfh kgfi kfx কোাত
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মাসনুন দোয়া</title>
+    <!-- Firebase SDK (Modular v12) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkyPoIAdY3zlsbgj1nDnTdLTgJwykIYLQ",
+            authDomain: "masnoon-dua-f33fc.firebaseapp.com",
+            databaseURL: "https://masnoon-dua-f33fc-default-rtdb.firebaseio.com",
+            projectId: "masnoon-dua-f33fc",
+            storageBucket: "masnoon-dua-f33fc.firebasestorage.app",
+            messagingSenderId: "43307374753",
+            appId: "1:43307374753:web:78e83450bb7dfb5438f8e0",
+            measurementId: "G-NHVJJS1N4E"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.firebaseDB = { db, ref, set, onValue };
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #0f5132;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --border-color: #e9ecef;
+            --accent-gold: #ffc107;
+        }
+
+        body.dark-mode {
+            --primary-color: #198754;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+        }
+
+        body {
+            -webkit-user-select: none;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 75px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 12px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+        .header-icons { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { font-size: 1.1rem; cursor: pointer; padding: 4px; background: none; border: none; color: white; }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .search-container { padding: 12px 15px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); }
+        .search-container input {
+            width: 100%; padding: 10px 14px; border: 1px solid var(--border-color);
+            border-radius: 20px; font-size: 0.95rem; box-sizing: border-box; outline: none;
+            background: var(--bg-color); color: var(--text-color);
+        }
+
+        .main-content { padding: 15px; }
+        .item-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .list-item {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 14px 16px; font-weight: 600;
+            color: var(--primary-color); display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 16px; margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04); position: relative;
+        }
+
+        .category-badge {
+            background-color: #e8f5e9; color: var(--primary-color);
+            font-size: 0.8rem; padding: 4px 10px; border-radius: 12px; font-weight: bold;
+        }
+
+        body.dark-mode .category-badge { background-color: #052c1e; }
+
+        .arabic-text {
+            font-size: 1.7rem; text-align: right; direction: rtl;
+            color: var(--primary-color); margin: 15px 0; line-height: 1.9; font-weight: bold;
+        }
+
+        .pronunciation, .meaning { font-size: 0.95rem; margin: 8px 0; line-height: 1.6; }
+        .reference-box { margin-top: 12px; padding-top: 8px; border-top: 1px dashed var(--border-color); color: #6c757d; font-size: 0.85rem; }
+
+        .card-tools {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color);
+        }
+
+        .tool-btn {
+            background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--text-color);
+            display: flex; align-items: center; gap: 4px; padding: 5px 8px; border-radius: 5px;
+        }
+
+        .counter-badge {
+            background: var(--primary-color); color: white; border-radius: 50%;
+            padding: 2px 7px; font-size: 0.8rem; font-weight: bold;
+        }
+
+        .card-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .action-btn { flex: 1; padding: 8px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; border: none; }
+        .btn-edit { background-color: #fff3cd; color: #664d03; }
+        .btn-delete { background-color: #f8d7da; color: #842029; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 0.9rem; }
+        .form-group select, .form-group textarea, .form-group input {
+            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; background: var(--bg-color); color: var(--text-color);
+        }
+
+        .password-input-group { position: relative; display: flex; align-items: center; }
+        .password-input-group input { padding-right: 40px !important; }
+        .toggle-password-btn { position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0; color: #6c757d; }
+
+        .submit-btn { width: 100%; background: var(--primary-color); color: white; padding: 12px; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--card-bg); display: flex; justify-content: space-around;
+            padding: 8px 0; border-top: 1px solid var(--border-color); z-index: 999;
+        }
+
+        .nav-btn {
+            background: none; border: none; font-size: 0.75rem; color: #6c757d;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1;
+        }
+
+        .nav-btn.active { color: var(--primary-color); font-weight: bold; }
+        .hidden { display: none !important; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #6c757d; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+
+        .modal-card { background: var(--card-bg); color: var(--text-color); width: 85%; max-width: 350px; padding: 20px; border-radius: 12px; position: relative; }
+        .close-modal-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-color); }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <button class="back-btn hidden" id="backBtn" onclick="handleBackNavigation()">⬅ ফিরে যান</button>
+        <h1 id="headerTitle">মাসনুন দোয়া</h1>
+        <div class="header-icons">
+            <button class="icon-btn" onclick="toggleDarkMode()" title="ডার্ক/লাইট মোড">🌙</button>
+            <button class="icon-btn hidden" id="changePassIcon" onclick="openChangePassModal()" title="পাসওয়ার্ড পরিবর্তন">⚙️</button>
+            <span class="icon-btn" onclick="handlePenTap()">✒️</span>
+        </div>
+    </header>
+
+    <div class="search-container" id="searchBox">
+        <input type="text" id="searchInput" placeholder="খুঁজুন (উচ্চারণ, অর্থ বা শিরোনাম)..." onkeyup="handleSearch()">
+    </div>
+
+    <main class="main-content" id="mainContent"></main>
+
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal-btn" onclick="closeLoginModal()">✖</button>
+            <h2>এডমিন লগইন</h2>
+            <form onsubmit="handleAdminLogin(event)">
+                <div class="form-group">
+                    <label>ইমেইল / জিমেইল</label>
+                    <input type="email" id="adminEmailInput" required placeholder="ইমেইল দিন...">
+                </div>
+                <div class="form-group">
+                    <label>পাসওয়ার্ড</label>
+                    <div class="password-input-group">
+                        <input type="password" id="adminPasswordInput" required placeholder="পাসওয়ার্ড দিন...">
+                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPasswordInput', this)">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">লগইন করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="changePassModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal-btn" onclick="closeChangePassModal()">✖</button>
+            <h2>পাসওয়ার্ড পরিবর্তন</h2>
+            <form onsubmit="handlePasswordChange(event)">
+                <div class="form-group">
+                    <label>নতুন পাসওয়ার্ড</label>
+                    <div class="password-input-group">
+                        <input type="password" id="newPassInput" required placeholder="নতুন পাসওয়ার্ড...">
+                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('newPassInput', this)">👁️️</button>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">আপডেট করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit About Modal -->
+    <div id="editAboutModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal-btn" onclick="closeEditAboutModal()">✖</button>
+            <h2>অ্যাবাউট পেজ এডিট করুন</h2>
+            <form onsubmit="saveAboutPage(event)">
+                <div class="form-group">
+                    <label>অ্যাপের বর্ণনা</label>
+                    <textarea id="aboutDescInput" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dynamic Bottom Navigation -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-btn active" id="navHome" onclick="switchTab('home')"><span>🏠</span><span>হোম</span></button>
+        <button class="nav-btn" id="navAll" onclick="switchTab('all')"><span>📖</span><span>সকল দোয়া</span></button>
+        <button class="nav-btn" id="navFav" onclick="switchTab('fav')"><span>❤</span><span>পছন্দের</span></button>
+        <button class="nav-btn hidden" id="addNavBtn" onclick="openAddForm()"><span>➕</span><span>এন্ট্রি</span></button>
+        <button class="nav-btn" id="navAbout" onclick="switchTab('about')"><span>ℹ️</span><span>অ্যাবাউট</span></button>
+    </nav>
+
+    <script>
+        // সরাসরি আপনার লোকাল স্টোরেজ থেকে ডেটা নেওয়া হবে, কোনো ডিফল্ট ভুয়া ডেটা থাকবে না
+        let duaData = JSON.parse(localStorage.getItem('myDuaDatabase')) || [];
+        let favorites = JSON.parse(localStorage.getItem('myFavList')) || [];
+        let readCounts = JSON.parse(localStorage.getItem('myDuaCounts')) || {};
+        let aboutText = localStorage.getItem('myAboutText') || "মাসনুন দোয়া অ্যাপটি দৈনন্দিন জীবনের প্রয়োজনীয় দোয়া সহজে পাওয়ার জন্য তৈরি।";
+        let savedAdminPass = localStorage.getItem('adminPassword') || "414517Mijan";
+        const adminEmail = "mijanahmedofficial1@gmail.com";
+
+        let editingIndex = -1;
+        let isAdmin = false;
+        let currentView = 'categories';
+        let selectedCategoryTemp = '';
+        let penTapCount = 0;
+        let penTapTimer = null;
+        let fontSize = 1.7;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // ইনস্ট্যান্ট রেন্ডার
+        renderCategoryList();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const checkFirebaseInterval = setInterval(() => {
+                if (window.firebaseDB) {
+                    clearInterval(checkFirebaseInterval);
+                    const { db, ref, onValue, set } = window.firebaseDB;
+
+                    onValue(ref(db, 'duaData'), (snapshot) => {
+                        const data = snapshot.val();
+                        if (data && data.length > 0) {
+                            // ফায়ারবেসে ডেটা থাকলে তা আপডেট হবে
+                            duaData = data;
+                            localStorage.setItem('myDuaDatabase', JSON.stringify(duaData));
+                            if(currentView === 'categories') renderCategoryList();
+                            else if(currentView === 'all') renderAllDuas();
+                        } else if (duaData.length > 0) {
+                            // ফায়ারবেস খালি কিন্তু আপনার লোকাল স্টোরেজে ডেটা থাকলে তা ফায়ারবেসে ব্যাকআপ হয়ে যাবে
+                            set(ref(db, 'duaData'), duaData);
+                        }
+                    });
+
+                    onValue(ref(db, 'aboutText'), (snapshot) => {
+                        const data = snapshot.val();
+                        if(data) {
+                            aboutText = data;
+                            localStorage.setItem('myAboutText', aboutText);
+                        }
+                    });
+
+                    onValue(ref(db, 'adminPassword'), (snapshot) => {
+                        const data = snapshot.val();
+                        if(data) savedAdminPass = data;
+                    });
+                }
+            }, 50);
+        });
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerText = "🙈";
+            } else {
+                input.type = "password";
+                btn.innerText = "👁";
+            }
+        }
+
+        function saveToCloud() {
+            localStorage.setItem('myDuaDatabase', JSON.stringify(duaData));
+            localStorage.setItem('myAboutText', aboutText);
+            localStorage.setItem('myFavList', JSON.stringify(favorites));
+            localStorage.setItem('myDuaCounts', JSON.stringify(readCounts));
+
+            if (window.firebaseDB) {
+                const { db, ref, set } = window.firebaseDB;
+                set(ref(db, 'duaData'), duaData);
+                set(ref(db, 'aboutText'), aboutText);
+                set(ref(db, 'adminPassword'), savedAdminPass);
+            }
+        }
+
+        function updateNavActive(activeId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            if(document.getElementById(activeId)) document.getElementById(activeId).classList.add('active');
+        }
+
+        function switchTab(tab) {
+            if (tab === 'home') { updateNavActive('navHome'); renderCategoryList(); }
+            else if (tab === 'all') { updateNavActive('navAll'); renderAllDuas(); }
+            else if (tab === 'fav') { updateNavActive('navFav'); renderFavorites(); }
+            else if (tab === 'about') { updateNavActive('navAbout'); renderAboutPage(); }
+        }
+
+        function handlePenTap() {
+            penTapCount++;
+            clearTimeout(penTapTimer);
+            penTapTimer = setTimeout(() => { penTapCount = 0; }, 1500);
+
+            if (penTapCount === 3) {
+                penTapCount = 0;
+                if (!isAdmin) { openLoginModal(); } 
+                else {
+                    isAdmin = false;
+                    alert("এডমিন মোড বন্ধ করা হয়েছে।");
+                    document.getElementById('addNavBtn').classList.add('hidden');
+                    document.getElementById('changePassIcon').classList.add('hidden');
+                    renderCategoryList();
+                }
+            }
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            let email = document.getElementById('adminEmailInput').value.trim().toLowerCase();
+            let pass = document.getElementById('adminPasswordInput').value.trim();
+
+            if (email === adminEmail.toLowerCase() && pass === savedAdminPass) {
+                isAdmin = true;
+                closeLoginModal();
+                alert("এডমিন লগইন সফল হয়েছে!");
+                document.getElementById('addNavBtn').classList.remove('hidden');
+                document.getElementById('changePassIcon').classList.remove('hidden');
+                renderCategoryList();
+            } else { 
+                alert("ভুল ইমেইল অথবা পাসওয়ার্ড!"); 
+            }
+        }
+
+        function openChangePassModal() { document.getElementById('changePassModal').classList.remove('hidden'); }
+        function closeChangePassModal() { document.getElementById('changePassModal').classList.add('hidden'); }
+
+        function handlePasswordChange(e) {
+            e.preventDefault();
+            let newP = document.getElementById('newPassInput').value.trim();
+            if(newP.length >= 4) {
+                savedAdminPass = newP;
+                saveToCloud();
+                closeChangePassModal();
+                alert("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!");
+            } else { alert("কমপক্ষে ৪ অক্ষরের পাসওয়ার্ড দিন।"); }
+        }
+
+        function handleSearch() {
+            let query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if(!query) {
+                if(currentView === 'all') renderAllDuas();
+                else if(currentView === 'categories') renderCategoryList();
+                return;
+            }
+
+            const filtered = duaData.filter(item => 
+                (item.title && item.title.toLowerCase().includes(query)) ||
+                (item.pronunciation && item.pronunciation.toLowerCase().includes(query)) ||
+                (item.meaning && item.meaning.toLowerCase().includes(query)) ||
+                (item.category && item.category.toLowerCase().includes(query))
+            );
+
+            renderCustomDuaList(filtered, `অনুসন্ধানের ফলাফল (${filtered.length})`);
+        }
+
+        function renderCategoryList() {
+            currentView = 'categories';
+            updateNavActive('navHome');
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('searchBox').classList.remove('hidden');
+            document.getElementById('headerTitle').innerText = "মাসনুন দোয়া";
+            
+            const content = document.getElementById('mainContent');
+            let categoriesWithData = [...new Set(duaData.map(item => item.category))];
+
+            if (categoriesWithData.length === 0) {
+                content.innerHTML = `<div class="empty-state"><h3>কোনো ক্যাটাগরি পাওয়া যায়নি</h3><p>এন্ট্রি অপশন থেকে নতুন দোয়া যোগ করুন।</p></div>`;
+                return;
+            }
+
+            let html = '<div class="item-list">';
+            categoriesWithData.forEach(cat => {
+                let count = duaData.filter(item => item.category === cat).length;
+                html += `<div class="list-item" onclick="renderTitleList('${cat}')"><span>📚 ${cat}</span><small>(${count}টি) ➔</small></div>`;
+            });
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function renderTitleList(categoryName) {
+            currentView = 'titles';
+            selectedCategoryTemp = categoryName;
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('searchBox').classList.remove('hidden');
+            document.getElementById('headerTitle').innerText = categoryName;
+
+            const content = document.getElementById('mainContent');
+            let itemsInCat = duaData.filter(item => item.category === categoryName);
+
+            let html = '<div class="item-list">';
+            itemsInCat.forEach(item => {
+                html += `<div class="list-item" onclick="showDuaDetailsByItem('${item.title}')"><span>📖 ${item.title}</span><small>➔</small></div>`;
+            });
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function renderAllDuas() {
+            currentView = 'all';
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('searchBox').classList.remove('hidden');
+            document.getElementById('headerTitle').innerText = "সকল দোয়া";
+            
+            const content = document.getElementById('mainContent');
+            if (duaData.length === 0) {
+                content.innerHTML = `<div class="empty-state"><h3>কোনো তথ্য পাওয়া যায়নি</h3></div>`;
+                return;
+            }
+
+            let html = '<div class="item-list">';
+            duaData.forEach(item => {
+                html += `<div class="list-item" onclick="showDuaDetailsByItem('${item.title}')"><div>📖 ${item.title} <small>(${item.category})</small></div><small>➔</small></div>`;
+            });
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function renderFavorites() {
+            currentView = 'fav';
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('searchBox').classList.add('hidden');
+            document.getElementById('headerTitle').innerText = "পছন্দের দোয়া";
+
+            let favItems = duaData.filter(item => favorites.includes(item.title));
+            if(favItems.length === 0) {
+                document.getElementById('mainContent').innerHTML = `<div class="empty-state"><h3>কোনো পছন্দের দোয়া বুকমার্ক করা নেই।</h3></div>`;
+                return;
+            }
+            renderCustomDuaList(favItems);
+        }
+
+        function renderCustomDuaList(items, customTitle = null) {
+            const content = document.getElementById('mainContent');
+            if (items.length === 0) {
+                content.innerHTML = `<div class="empty-state"><h3>কোনো তথ্য পাওয়া যায়নি</h3></div>`;
+                return;
+            }
+
+            let html = customTitle ? `<h3>${customTitle}</h3>` : '';
+            html += '<div class="item-list">';
+            items.forEach(item => {
+                html += `<div class="list-item" onclick="showDuaDetailsByItem('${item.title}')"><div>📖 ${item.title} <small>(${item.category})</small></div><small>➔</small></div>`;
+            });
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function showDuaDetailsByItem(selectedTitle) {
+            currentView = 'details';
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('searchBox').classList.add('hidden');
+            document.getElementById('headerTitle').innerText = selectedTitle;
+
+            const content = document.getElementById('mainContent');
+            let item = duaData.find(d => d.title === selectedTitle);
+
+            if (!item) {
+                content.innerHTML = `<div class="empty-state"><h3>দোয়াটি পাওয়া যায়নি</h3></div>`;
+                return;
+            }
+
+            let realIndex = duaData.indexOf(item);
+            let isFav = favorites.includes(item.title);
+            let count = readCounts[item.title] || 0;
+
+            let html = `
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:10px;">
+                    <button onclick="changeFontSize(0.1)" class="back-btn" style="color:var(--text-color); background:var(--card-bg);">A+</button>
+                    <button onclick="changeFontSize(-0.1)" class="back-btn" style="color:var(--text-color); background:var(--card-bg);">A-</button>
+                </div>
+                <div class="card">
+                    <span class="category-badge">${item.category}</span>
+                    ${item.arabic ? `<p class="arabic-text" style="font-size: ${fontSize}rem;">${item.arabic}</p>` : ''}
+                    ${item.pronunciation ? `<p class="pronunciation"><strong>উচ্চারণ:</strong> ${item.pronunciation}</p>` : ''}
+                    ${item.meaning ? `<p class="meaning"><strong>অর্থ:</strong> ${item.meaning}</p>` : ''}
+                    ${item.reference ? `<div class="reference-box">📌 <strong>রেফারেন্স:</strong> ${item.reference}</div>` : ''}
+                    
+                    <div class="card-tools">
+                        <button class="tool-btn" onclick="toggleFavorite('${item.title}')">${isFav ? '❤️' : '🤍'} বুকমার্ক</button>
+                        <button class="tool-btn" onclick="copyDua(${realIndex})">📋 কপি</button>
+                        <button class="tool-btn" onclick="speakText('${item.arabic || item.pronunciation}')">🔊 অডিও</button>
+                        <button class="tool-btn" onclick="incrementCount('${item.title}')">📿 <span class="counter-badge">${count}</span></button>
+                    </div>
+
+                    ${isAdmin ? `
+                    <div class="card-actions">
+                        <button class="action-btn btn-edit" onclick="editDua(${realIndex})">✏ এডিট</button>
+                        <button class="action-btn btn-delete" onclick="deleteDua(${realIndex})">🗑️ ডিলিট</button>
+                    </div>` : ''}
+                </div>`;
+            content.innerHTML = html;
+        }
+
+        function toggleFavorite(title) {
+            let idx = favorites.indexOf(title);
+            if (idx > -1) favorites.splice(idx, 1);
+            else favorites.push(title);
+            saveToCloud();
+            if (currentView === 'fav') renderFavorites();
+            else showDuaDetailsByItem(title);
+        }
+
+        function incrementCount(title) {
+            readCounts[title] = (readCounts[title] || 0) + 1;
+            saveToCloud();
+            showDuaDetailsByItem(title);
+        }
+
+        function copyDua(index) {
+            let d = duaData[index];
+            let text = `${d.title}\n${d.arabic ? d.arabic + '\n' : ''}উচ্চারণ: ${d.pronunciation}\nঅর্থ: ${d.meaning}\nরেফারেন্স: ${d.reference}`;
+            navigator.clipboard.writeText(text);
+            alert("দোয়া কপি করা হয়েছে!");
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                let msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'ar-SA';
+                window.speechSynthesis.speak(msg);
+            } else { alert("আপনার ব্রাউজারে স্পিচ ফিচার কাজ করছে না।"); }
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(1.2, Math.min(2.5, fontSize + delta));
+            let elements = document.querySelectorAll('.arabic-text');
+            elements.forEach(el => el.style.fontSize = fontSize + 'rem');
+        }
+
+        function renderAboutPage() {
+            currentView = 'about';
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('searchBox').classList.add('hidden');
+            document.getElementById('headerTitle').innerText = "অ্যাপ সম্পর্কে";
+
+            document.getElementById('mainContent').innerHTML = `
+                <div class="card" style="text-align: center;">
+                    <h2>মাসনুন দোয়া</h2>
+                    <p style="text-align: left;">${aboutText}</p>
+                    <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+                        <button class="submit-btn" style="background:#17a2b8;" onclick="exportData()">📥 ব্যাকআপ ডাটা এক্সপোর্ট</button>
+                        ${isAdmin ? `<button class="submit-btn" style="background:#ffc107; color:#000;" onclick="openEditAboutModal()">✏️ এবাউট পেজ এডিট করুন</button>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        function exportData() {
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(duaData));
+            let dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "masnoon_dua_backup.json");
+            dlAnchorElem.click();
+        }
+
+        function openEditAboutModal() {
+            document.getElementById('aboutDescInput').value = aboutText;
+            document.getElementById('editAboutModal').classList.remove('hidden');
+        }
+        function closeEditAboutModal() { document.getElementById('editAboutModal').classList.add('hidden'); }
+
+        function saveAboutPage(e) {
+            e.preventDefault();
+            aboutText = document.getElementById('aboutDescInput').value;
+            saveToCloud();
+            closeEditAboutModal();
+            alert("এবাউট পেজ আপডেট হয়েছে!");
+            renderAboutPage();
+        }
+
+        function handleBackNavigation() {
+            if (currentView === 'details') renderTitleList(selectedCategoryTemp);
+            else if (currentView === 'titles') renderCategoryList();
+            else renderCategoryList();
+        }
+
+        function openAddForm() {
+            currentView = 'form';
+            editingIndex = -1;
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('searchBox').classList.add('hidden');
+            document.getElementById('headerTitle').innerText = "নতুন দোয়া যুক্ত করুন";
+
+            document.getElementById('mainContent').innerHTML = `
+                <div class="card">
+                    <form onsubmit="handleFormSubmit(event)">
+                        <div class="form-group">
+                            <label>ক্যাটাগরি *</label>
+                            <select id="categorySelect" onchange="toggleCustomCategoryInput()" required>
+                                <option value="">ক্যাটাগরি নির্বাচন করুন...</option>
+                                <option value="সকাল-সন্ধ্যা">সকাল-সন্ধ্যা</option>
+                                <option value="নামাজ">নামাজ</option>
+                                <option value="ঘুমের দোয়া">ঘুমের দোয়া</option>
+                                <option value="খাবার">খাবার</option>
+                                <option value="পবিত্রতা ও ওজু">পবিত্রতা ও ওজু</option>
+                                <option value="ভ্রমণ">ভ্রমণ</option>
+                                <option value="সাধারণ">সাধারণ</option>
+                                <option value="others">অন্যান্য (নতুন লিখুন)...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group hidden" id="customCategoryGroup">
+                            <label>নতুন ক্যাটাগরির নাম লিখুন *</label>
+                            <input type="text" id="customCategoryInput" placeholder="যেমন: বিপদ-আপদ">
+                        </div>
+
+                        <div class="form-group"><label>শিরোনাম *</label><input type="text" id="title" required placeholder="দোয়ার নাম..."></div>
+                        <div class="form-group"><label>আরবি</label><textarea id="arabic" rows="2"></textarea></div>
+                        <div class="form-group"><label>উচ্চারণ</label><textarea id="pronunciation" rows="2"></textarea></div>
+                        <div class="form-group"><label>অর্থ</label><textarea id="meaning" rows="2"></textarea></div>
+                        <div class="form-group"><label>রেফারেন্স</label><input type="text" id="reference"></div>
+                        <button type="submit" class="submit-btn">💾 সেভ করুন</button>
+                    </form>
+                </div>`;
+        }
+
+        function toggleCustomCategoryInput() {
+            const selectVal = document.getElementById('categorySelect').value;
+            const customGroup = document.getElementById('customCategoryGroup');
+            const customInput = document.getElementById('customCategoryInput');
+
+            if (selectVal === 'others') {
+                customGroup.classList.remove('hidden');
+                customInput.required = true;
+            } else {
+                customGroup.classList.add('hidden');
+                customInput.required = false;
+                customInput.value = '';
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            let selectedCat = document.getElementById('categorySelect').value;
+            if (selectedCat === 'others') {
+                selectedCat = document.getElementById('customCategoryInput').value.trim();
+            }
+
+            const newDua = {
+                title: document.getElementById('title').value.trim(),
+                category: selectedCat,
+                arabic: document.getElementById('arabic').value,
+                pronunciation: document.getElementById('pronunciation').value,
+                meaning: document.getElementById('meaning').value,
+                reference: document.getElementById('reference').value
+            };
+
+            if (editingIndex === -1) {
+                duaData.push(newDua);
+            } else {
+                duaData[editingIndex] = newDua;
+            }
+
+            saveToCloud();
+            renderCategoryList();
+        }
+
+        function editDua(index) {
+            editingIndex = index;
+            const item = duaData[index];
+            openAddForm();
+            
+            const categorySelect = document.getElementById('categorySelect');
+            const customGroup = document.getElementById('customCategoryGroup');
+            const customInput = document.getElementById('customCategoryInput');
+
+            let optionExists = false;
+            for (let i = 0; i < categorySelect.options.length; i++) {
+                if (categorySelect.options[i].value === item.category) {
+                    optionExists = true;
+                    break;
+                }
+            }
+
+            if (optionExists) {
+                categorySelect.value = item.category;
+                customGroup.classList.add('hidden');
+                customInput.required = false;
+            } else {
+                categorySelect.value = 'others';
+                customGroup.classList.remove('hidden');
+                customInput.value = item.category;
+                customInput.required = true;
+            }
+
+            document.getElementById('title').value = item.title;
+            document.getElementById('arabic').value = item.arabic;
+            document.getElementById('pronunciation').value = item.pronunciation;
+            document.getElementById('meaning').value = item.meaning;
+            document.getElementById('reference').value = item.reference;
+        }
+
+        function deleteDua(index) {
+            if (confirm("মুছে ফেলতে চান?")) {
+                duaData.splice(index, 1);
+                saveToCloud();
+                renderCategoryList();
+            }
+        }
+    </script>
+</body>
+                      </html>
