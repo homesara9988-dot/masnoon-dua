@@ -194,7 +194,7 @@
         <input type="text" id="searchInput" placeholder="খুঁজুন (উচ্চারণ, অর্থ বা শিরোনাম)..." onkeyup="handleSearch()">
     </div>
 
-    <main class="main-content" id="mainContent"><div class="empty-state"><h3>লোড হচ্ছে...</h3></div></main>
+    <main class="main-content" id="mainContent"></main>
 
     <!-- Admin Login Modal -->
     <div id="loginModal" class="modal-overlay hidden">
@@ -255,16 +255,17 @@
     <nav class="bottom-nav" id="bottomNav">
         <button class="nav-btn active" id="navHome" onclick="switchTab('home')"><span>🏠</span><span>হোম</span></button>
         <button class="nav-btn" id="navAll" onclick="switchTab('all')"><span>📖</span><span>সকল দোয়া</span></button>
-        <button class="nav-btn" id="navFav" onclick="switchTab('fav')"><span>❤️</span><span>পছন্দের</span></button>
+        <button class="nav-btn" id="navFav" onclick="switchTab('fav')"><span>❤️️</span><span>পছন্দের</span></button>
         <button class="nav-btn hidden" id="addNavBtn" onclick="openAddForm()"><span>➕</span><span>এন্ট্রি</span></button>
         <button class="nav-btn" id="navAbout" onclick="switchTab('about')"><span>ℹ️</span><span>অ্যাবাউট</span></button>
     </nav>
 
     <script>
-        let duaData = [];
+        // প্রথমে লোকাল স্টোরেজ থেকে ইনস্ট্যান্ট ডেটা লোড করা হবে যাতে কোনো লোডিং টাইম না লাগে
+        let duaData = JSON.parse(localStorage.getItem('myDuaDatabase')) || [];
         let favorites = JSON.parse(localStorage.getItem('myFavList')) || [];
         let readCounts = JSON.parse(localStorage.getItem('myDuaCounts')) || {};
-        let aboutText = "মাসনুন দোয়া অ্যাপটি দৈনন্দিন জীবনের প্রয়োজনীয় দোয়া সহজে পাওয়ার জন্য তৈরি।";
+        let aboutText = localStorage.getItem('myAboutText') || "মাসনুন দোয়া অ্যাপটি দৈনন্দিন জীবনের প্রয়োজনীয় দোয়া সহজে পাওয়ার জন্য তৈরি।";
         let savedAdminPass = localStorage.getItem('adminPassword') || "414517Mijan";
         const adminEmail = "mijanahmedofficial1@gmail.com";
 
@@ -280,6 +281,9 @@
             document.body.classList.add('dark-mode');
         }
 
+        // অ্যাপ চালু হওয়ামাত্র ইনস্ট্যান্ট রেন্ডার করা হলো
+        renderCategoryList();
+
         window.addEventListener('DOMContentLoaded', () => {
             const checkFirebaseInterval = setInterval(() => {
                 if (window.firebaseDB) {
@@ -288,14 +292,20 @@
 
                     onValue(ref(db, 'duaData'), (snapshot) => {
                         const data = snapshot.val();
-                        duaData = data || [];
-                        if(currentView === 'categories') renderCategoryList();
-                        else if(currentView === 'all') renderAllDuas();
+                        if (data) {
+                            duaData = data;
+                            localStorage.setItem('myDuaDatabase', JSON.stringify(duaData));
+                            if(currentView === 'categories') renderCategoryList();
+                            else if(currentView === 'all') renderAllDuas();
+                        }
                     });
 
                     onValue(ref(db, 'aboutText'), (snapshot) => {
                         const data = snapshot.val();
-                        if(data) aboutText = data;
+                        if(data) {
+                            aboutText = data;
+                            localStorage.setItem('myAboutText', aboutText);
+                        }
                     });
 
                     onValue(ref(db, 'adminPassword'), (snapshot) => {
@@ -303,7 +313,7 @@
                         if(data) savedAdminPass = data;
                     });
                 }
-            }, 100);
+            }, 50);
         });
 
         function toggleDarkMode() {
@@ -319,19 +329,22 @@
                 btn.innerText = "🙈";
             } else {
                 input.type = "password";
-                btn.innerText = "👁️";
+                btn.innerText = "👁";
             }
         }
 
         function saveToCloud() {
+            localStorage.setItem('myDuaDatabase', JSON.stringify(duaData));
+            localStorage.setItem('myAboutText', aboutText);
+            localStorage.setItem('myFavList', JSON.stringify(favorites));
+            localStorage.setItem('myDuaCounts', JSON.stringify(readCounts));
+
             if (window.firebaseDB) {
                 const { db, ref, set } = window.firebaseDB;
                 set(ref(db, 'duaData'), duaData);
                 set(ref(db, 'aboutText'), aboutText);
                 set(ref(db, 'adminPassword'), savedAdminPass);
             }
-            localStorage.setItem('myFavList', JSON.stringify(favorites));
-            localStorage.setItem('myDuaCounts', JSON.stringify(readCounts));
         }
 
         function updateNavActive(activeId) {
@@ -700,7 +713,7 @@
             }
 
             const newDua = {
-                title: document.getElementById('title',).value,
+                title: document.getElementById('title').value.trim(),
                 category: selectedCat,
                 arabic: document.getElementById('arabic').value,
                 pronunciation: document.getElementById('pronunciation').value,
@@ -762,4 +775,4 @@
         }
     </script>
 </body>
-        </html>
+                                                                                  </html>
