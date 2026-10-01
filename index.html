@@ -23,7 +23,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // গ্লোবাল ফাংশন হিসেবে উইন্ডোতে সেট করা যাতে অন্য স্ক্রিপ্ট থেকে কল করা যায়
         window.firebaseDB = { db, ref, set, onValue };
     </script>
 
@@ -281,14 +280,12 @@
             document.body.classList.add('dark-mode');
         }
 
-        // ফায়ারবেস থেকে ডাটা রিয়েল-টাইম লোড করার ব্যবস্থা
         window.addEventListener('DOMContentLoaded', () => {
             const checkFirebaseInterval = setInterval(() => {
                 if (window.firebaseDB) {
                     clearInterval(checkFirebaseInterval);
                     const { db, ref, onValue } = window.firebaseDB;
 
-                    // দোয়ার ডাটা সিঙ্ক
                     onValue(ref(db, 'duaData'), (snapshot) => {
                         const data = snapshot.val();
                         duaData = data || [];
@@ -296,13 +293,11 @@
                         else if(currentView === 'all') renderAllDuas();
                     });
 
-                    // এবাউট পেজ ডাটা সিঙ্ক
                     onValue(ref(db, 'aboutText'), (snapshot) => {
                         const data = snapshot.val();
                         if(data) aboutText = data;
                     });
 
-                    // এডমিন পাসওয়ার্ড সিঙ্ক
                     onValue(ref(db, 'adminPassword'), (snapshot) => {
                         const data = snapshot.val();
                         if(data) savedAdminPass = data;
@@ -538,7 +533,7 @@
 
                     ${isAdmin ? `
                     <div class="card-actions">
-                        <button class="action-btn btn-edit" onclick="editDua(${realIndex})">✏️ এডিট</button>
+                        <button class="action-btn btn-edit" onclick="editDua(${realIndex})">✏ এডিট</button>
                         <button class="action-btn btn-delete" onclick="deleteDua(${realIndex})">🗑️ ডিলিট</button>
                     </div>` : ''}
                 </div>`;
@@ -695,7 +690,7 @@
                 category: selectedCat,
                 arabic: document.getElementById('arabic').value,
                 pronunciation: document.getElementById('pronunciation').value,
-                meaning: document.getElementById('meaning.value' in window ? '' : 'meaning').value,
+                meaning: document.getElementById('meaning').value,
                 reference: document.getElementById('reference').value
             };
 
@@ -753,4 +748,4 @@
         }
     </script>
 </body>
-</html>
+                        </html>
